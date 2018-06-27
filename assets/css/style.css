@@ -1,0 +1,30 @@
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: auto;
+    text-align: center;
+    align-content: center;
+  }
+
+.big-container {
+    text-align: center;
+    background-size: cover;
+}
+
+.player-container {
+    align-content: center;
+}
+
+.game-container {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    justify-content: space-between;
+    margin: auto;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+}
