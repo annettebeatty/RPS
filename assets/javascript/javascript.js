@@ -30,6 +30,8 @@
     var setUp = true;
     var playGame = false;
     var childchange = 0;
+    var games = 0;
+    var both = false;
 
     $(document).ready(function()
     {
@@ -41,6 +43,7 @@
             event.preventDefault();  // Keeps from refreshing the page
         
             console.log("Clicked start");
+
             name = $("#name").val().trim();
         
             console.log("name", name);
@@ -48,6 +51,7 @@
             {     
                 // Can play the game 
                 stuffIt();
+                $("#playerMsg").text("You're in!!");
             }
             else 
             {
@@ -127,18 +131,17 @@
                 if (userArray[1].choice != "" && userArray[2].choice != "")
                 {   // Got some choices
                     console.log("In checking results")
+                    both = true;
                     checkResults();
 
-                    //setTimeout(updateUser, 4000);
                     // Clear out the choices  **** I need to come back to this **
-                    // choice = "";
 
                     //updateUser();
 
                     // Reset user to start another round
                     //turn = 1;
-                   // database.ref("/turn").set(turn);
-
+                    //database.ref("/turn").set(turn);
+                    both = false;
                 }
             } 
   
@@ -259,6 +262,8 @@
             console.log("winner ", winflag);
 
             $("#winbox").html(winner + "<br>WINS!!");
+
+            renderCenter();
         }
 
         // They clicked a choice
@@ -314,20 +319,14 @@
         // Render the center box
         function renderCenter()
         {
-            var imgchoice = "assets/images/" + choice;
-
-
-            if (mePlayer == 1)
+            if (mePlayer == 1 || both == true)
             {
-                imgchoice = imgchoice + "1" + ".jpg";
-                console.log("imgchoice", imgchoice);
-                $("#player1Pick").html(`<img src="${imgchoice}" >`)
+                $("#player1Pick").html("<img src=assets/images/" + userArray[1].choice + "1.jpg>'");
             }
-            else
+
+            if (mePlayer == 2 || both == true)
             {
-                imgchoice = imgchoice + "2" + ".jpg";
-                console.log("imgchoice", imgchoice);
-                $("#player2Pick").html(`<img src="${imgchoice}" >`)
+                $("#player2Pick").html("<img src=assets/images/" + userArray[2].choice + "2.jpg>'");
             }
 
         }
