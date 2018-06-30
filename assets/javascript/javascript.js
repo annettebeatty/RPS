@@ -38,6 +38,8 @@
         $("#score1").html("<br>Wins: 0     Losses: 0");
         $("#score2").html("<br>Wins: 0     Losses: 0");
 
+        $("#chat-input").prop('disabled', true);
+
         // User hit the Start
         $("#start").on("click", function(event)
         {
@@ -60,6 +62,42 @@
             }
        
         }); // End of Start
+
+        // User hit the Chat
+        $("#chat-entry").on("click", function(event)
+        {
+            var chat = "";
+            var userRef = "";
+
+            console.log("chat")
+            event.preventDefault();  // Keeps from refreshing the page
+            
+            // Can only chat it there are two players
+            if (userArray == null || userArray[1] == null || userArray[2] == null)
+            {
+                console.log("can't chat");
+                $("#chat-input").prop('disabled', true);
+                return;
+            }
+
+            chat = $("#chat-input").val().trim();
+            console.log("Clicked chat", chat);
+            chat = userArray[mePlayer].name + ": " + chat;
+            let chatRef = database.ref("/chat");
+            chatRef.onDisconnect().remove();
+            database.ref("/chat").push(chat);
+        
+        }); // End of Chat
+
+        database.ref("/chat").on("child_added", function(snapshot) 
+        {
+            console.log(snapshot.val());
+            chat = snapshot.val();
+            console.log("In child added ", chat);
+
+            // Put chat into the box
+            $("#chatty").append(chat + "<br>");
+        });
 
         ////  This function handles a change in /turn
         database.ref("/turn").on("value", function(snapshot) {
@@ -117,6 +155,7 @@
                 }
 
                 playGame = false;
+                $("#chat-input").prop('disabled', true);
             }
             else   
                 $("#player1").text(userArray[1].name);
@@ -133,6 +172,7 @@
                 }
 
                 playGame = false;
+                $("#chat-input").prop('disabled', true);
             }
             else   
                 $("#player2").text(userArray[2].name);
@@ -249,6 +289,7 @@
                         console.log("Added player 2");
 
                         playGame = true;  // Set to pick choices
+                        $("#chat-input").prop('disabled', false);  // Enable chat
                         choiceInProgress = false;  // Turn "on" choice flag
                         database.ref("/turn").set(turn);
                     }
