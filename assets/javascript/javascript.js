@@ -40,7 +40,7 @@
 
         $("#chat-input").prop('disabled', true);
 
-        // User hit the Start
+        // User hit the Start, so this function process is it here
         $("#start").on("click", function(event)
         {
             event.preventDefault();  // Keeps from refreshing the page
@@ -63,7 +63,7 @@
        
         }); // End of Start
 
-        // User hit the Chat
+        // User hit the Chat, so we process that here
         $("#chat-entry").on("click", function(event)
         {
             var chat = "";
@@ -86,9 +86,12 @@
             let chatRef = database.ref("/chat");
             chatRef.onDisconnect().remove();
             database.ref("/chat").push(chat);
+
+            $('#input-form')[0].reset();
         
         }); // End of Chat
 
+        // This function deals with adding chats to the Firebase
         database.ref("/chat").on("child_added", function(snapshot) 
         {
             console.log(snapshot.val());
@@ -128,7 +131,7 @@
             console.log("The read failed: " + errorObject.code);
         });
 
-        ////  This function handles a change in /user
+        ////  This function handles all the changes in /user
         database.ref("/user").on("value", function(snapshot) 
         {
             console.log("In change in /user");
@@ -231,14 +234,13 @@
                     setTimeout(continueProcessing, 5000);
                 }
             } 
-  
 
         // If any errors are experienced, log them to console.
         }, function(errorObject) {
             console.log("The read failed: " + errorObject.code);
         });
 
-        // We clean up here so we can restart the game
+        // We clean up here so we can start the next game
         function continueProcessing()
         {
             processingFlag = false;
@@ -261,6 +263,9 @@
             database.ref("/turn").set(turn);
         }
 
+        // This function sets up the game.  Sets the number players so we limit to 2
+        // and game in progress flag
+        // Also sets chat so we can't chat unless there are two people.
         function setUpGame()
         {
             console.log("In SetUpGame");
@@ -273,8 +278,8 @@
             else   
             {
                 console.log("array length ", userArray.length);
-                // number of users is array - 1
 
+                // number of users is array - 1
                 if (userArray.length == null)
                 {
                     players = 1;
@@ -298,6 +303,7 @@
             console.log("Players ", players);
         }
     
+        // This just sets up the player data to be pushed into the Firebase /user
         function stuffIt()
         {
             // Push into the DB
@@ -324,6 +330,7 @@
 
         } // end StuffIt
 
+        // Checks to see who wins/loses.  Returns the player who won.
         function checkResults()
         {
             var winflag = 0;
@@ -353,7 +360,8 @@
             return winflag;
         }
 
-        // They clicked a choice
+        // They clicked a choice. 
+        // If there are two players, it will set turn in Firebase to toggle to other player
         $(document).on("click", ".rpsChoice", function()
         {   
             if (turn == mePlayer) // My Turn
@@ -381,6 +389,7 @@
             
         });
 
+        // Updates the Firebase for /user
         function updateUser()
         {
             path = "/user/" + mePlayer;

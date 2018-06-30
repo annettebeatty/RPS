@@ -1,3 +1,11 @@
+.player {
+    color: blue;
+}
+
+.center {
+    flex-direction: column;
+    margin: auto;
+}
 .big-container {
     height: 100px;
     margin: auto;
