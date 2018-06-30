@@ -29,7 +29,6 @@
     var choiceInProgress = false;
     var setUp = true;
     var playGame = false;
-    var childchange = 0;
     var processingFlag = false;
 
     $(document).ready(function()
@@ -122,39 +121,44 @@
             if (playGame)
             {
                 console.log("Player ", mePlayer);
-                console.log("child change ", childchange++);
                 console.log("choice ", userArray[1].choice);
                 console.log("choice ", userArray[2].choice);
+
+                $("#score1").html("<br>Wins: " + userArray[1].wins + "    Losses: " + userArray[1].losses);
+                $("#score2").html("<br>Wins: " + userArray[2].wins + "    Losses: " + userArray[2].losses);
+
+                if (processingFlag)
+                {
+                    return;
+                }
 
                 if (userArray[1].choice != "" && userArray[2].choice != "")
                 {   // Got some choices
                     console.log("In checking results")
 
-                    $("#score1").html("<br>Wins: " + userArray[1].wins + "    Losses: " + userArray[1].losses);
-                    $("#score2").html("<br>Wins: " + userArray[2].wins + "    Losses: " + userArray[2].losses);
-                    
-                    if (processingFlag)
+                    let winflag = checkResults();
+
+                    if (winflag == 0)
                     {
+                        $("#winbox").html("Tie Game!!");
+                        var imgchoice = "assets/images/" + choice;
+                        $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
+                        $("#player2Pick").html("<img src='assets/images/" + userArray[2].choice + "2.jpg'>");
                         return;
                     }
+        
+                    let winner = userArray[winflag].name;
+        
+                    console.log("winner ", winflag);
+        
+                    $("#winbox").html(winner + "<br>WINS!!");
+                    $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
+                    $("#player2Pick").html("<img src='assets/images/" + userArray[2].choice + "2.jpg'>");
 
-                    checkResults();
                     processingFlag = true;
-                    updateUser();
 
                     // Need to wait and on next update, update the scores
-                    setTimeout(continueProcessing, 4000);
-
-                    //setTimeout(updateUser, 4000);
-                    // Clear out the choices  **** I need to come back to this **
-                    // choice = "";
-
-                    //updateUser();
-
-                    // Reset user to start another round
-                    //turn = 1;
-                   // database.ref("/turn").set(turn);
-
+                    setTimeout(continueProcessing, 8000);
                 }
             } 
   
@@ -164,14 +168,27 @@
             console.log("The read failed: " + errorObject.code);
         });
 
+        // We clean up here so we can restart the game
         function continueProcessing()
         {
             processingFlag = false;
 
-            console.log("Finish processing");
+            console.log("Finish processing")
+
+            $("#winbox").html("<img src='assets/images/ezgif.com-crop.gif'>");
+
+            // Clear the choice for the next game
+            choice = "";
+            updateUser();
+
+            // Clear the choices from the screen
+            $("#player1Pick").html("");
+            $("#player2Pick").html("");
+
             // Reset user to start another round
-            //turn = 1;
-            //database.ref("/turn").set(turn);
+            choiceInProgress = false;
+            turn = 1;
+            database.ref("/turn").set(turn);
         }
 
         function setUpPlayers()
@@ -272,24 +289,7 @@
                 winflag = youPlayer;
             }
 
-            var winner;
-
-            if (winflag == 0)
-            {
-                $("#winbox").html("Tie Game!!");
-                var imgchoice = "assets/images/" + choice;
-                $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
-                $("#player2Pick").html("<img src='assets/images/" + userArray[1].choice + "2.jpg'>");
-                return;
-            }
-
-            winner = userArray[winflag].name;
-
-            console.log("winner ", winflag);
-
-            $("#winbox").html(winner + "<br>WINS!!");
-            $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
-            $("#player2Pick").html("<img src='assets/images/" + userArray[1].choice + "2.jpg'>");
+            return winflag;
         }
 
         // They clicked a choice
