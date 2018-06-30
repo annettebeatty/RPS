@@ -30,8 +30,6 @@
     var setUp = true;
     var playGame = false;
     var childchange = 0;
-    var games = 0;
-    var both = false;
 
     $(document).ready(function()
     {
@@ -43,7 +41,6 @@
             event.preventDefault();  // Keeps from refreshing the page
         
             console.log("Clicked start");
-
             name = $("#name").val().trim();
         
             console.log("name", name);
@@ -51,7 +48,6 @@
             {     
                 // Can play the game 
                 stuffIt();
-                $("#playerMsg").text("You're in!!");
             }
             else 
             {
@@ -131,17 +127,18 @@
                 if (userArray[1].choice != "" && userArray[2].choice != "")
                 {   // Got some choices
                     console.log("In checking results")
-                    both = true;
                     checkResults();
 
+                    //setTimeout(updateUser, 4000);
                     // Clear out the choices  **** I need to come back to this **
+                    // choice = "";
 
                     //updateUser();
 
                     // Reset user to start another round
                     //turn = 1;
-                    //database.ref("/turn").set(turn);
-                    both = false;
+                   // database.ref("/turn").set(turn);
+
                 }
             } 
   
@@ -244,7 +241,7 @@
             } else if (userArray[mePlayer].choice === 'scissors' && userArray[youPlayer].choice === 'paper') {
                 wins++;
                 winflag = mePlayer;
-            } else if (uuserArray[mePlayer].choice === 'scissors' && userArray[youPlayer].choice === 'rock') {
+            } else if (userArray[mePlayer].choice === 'scissors' && userArray[youPlayer].choice === 'rock') {
                 losses++;
                 winflag = youPlayer;
             }
@@ -254,6 +251,9 @@
             if (winflag == 0)
             {
                 $("#winbox").html("Tie Game!!");
+                var imgchoice = "assets/images/" + choice;
+                $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
+                $("#player2Pick").html("<img src='assets/images/" + userArray[1].choice + "2.jpg'>");
                 return;
             }
 
@@ -262,8 +262,8 @@
             console.log("winner ", winflag);
 
             $("#winbox").html(winner + "<br>WINS!!");
-
-            renderCenter();
+            $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
+            $("#player2Pick").html("<img src='assets/images/" + userArray[1].choice + "2.jpg'>");
         }
 
         // They clicked a choice
@@ -303,6 +303,8 @@
             {
                 userRef = database.ref(path);
                 userRef.onDisconnect().remove();
+                userRef = database.ref("/turn");
+                userRef.onDisconnect().remove()
                 setUp = false;
             }
 
@@ -319,14 +321,20 @@
         // Render the center box
         function renderCenter()
         {
-            if (mePlayer == 1 || both == true)
-            {
-                $("#player1Pick").html("<img src=assets/images/" + userArray[1].choice + "1.jpg>'");
-            }
+            var imgchoice = "assets/images/" + choice;
 
-            if (mePlayer == 2 || both == true)
+
+            if (mePlayer == 1)
             {
-                $("#player2Pick").html("<img src=assets/images/" + userArray[2].choice + "2.jpg>'");
+                imgchoice = imgchoice + "1" + ".jpg";
+                console.log("imgchoice", imgchoice);
+                $("#player1Pick").html(`<img src="${imgchoice}" >`)
+            }
+            else
+            {
+                imgchoice = imgchoice + "2" + ".jpg";
+                console.log("imgchoice", imgchoice);
+                $("#player2Pick").html(`<img src="${imgchoice}" >`)
             }
 
         }
