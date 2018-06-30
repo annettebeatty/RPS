@@ -35,6 +35,9 @@
     {
         console.log("Document ready");
 
+        $("#score1").html("<br>Wins: 0     Losses: 0");
+        $("#score2").html("<br>Wins: 0     Losses: 0");
+
         // User hit the Start
         $("#start").on("click", function(event)
         {
@@ -114,12 +117,9 @@
                 }
 
                 playGame = false;
-                return;
             }
             else   
                 $("#player1").text(userArray[1].name);
-
-            // There is a first player
 
             if (userArray[2] == null)
             {
@@ -188,7 +188,7 @@
                     updateUser();
 
                     // Need to wait and on next update, update the scores
-                    setTimeout(continueProcessing, 6000);
+                    setTimeout(continueProcessing, 5000);
                 }
             } 
   
@@ -247,7 +247,7 @@
                     if (players == 2)
                     {  // second player added - time to play!!
                         console.log("Added player 2");
-                        
+
                         playGame = true;  // Set to pick choices
                         choiceInProgress = false;  // Turn "on" choice flag
                         database.ref("/turn").set(turn);
