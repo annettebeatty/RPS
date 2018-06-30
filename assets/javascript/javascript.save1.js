@@ -66,7 +66,7 @@
 
             if (snapshot.val() == null) // Not set up yet
                 return;
-
+            
             turn = snapshot.val();
             console.log("Turn = ", turn);
             console.log("MePlayer = ", mePlayer, "YouPlayer = ", youPlayer);
@@ -104,42 +104,16 @@
             if (userArray[1] == null)
             {
                 $("#player1").text("Waiting for Player 1");
-                $("#score1").html("<br>Wins: 0     Losses: 0");
-
-
-                if (playGame)
-                {
-                    choiceInProgress = true;
-                    $("#playerMsg").text("Lost Player");
-                }
-
-                playGame = false;
                 return;
             }
-            else   
-                $("#player1").text(userArray[1].name);
-
-            // There is a first player
 
             if (userArray[2] == null)
             {
                 $("#player2").text("Waiting for Player 2");
-                $("#score2").html("<br>Wins: 0     Losses: 0");
-
-                if (playGame)
-                {
-                    choiceInProgress = true;
-                    $("#playerMsg").text("Lost Player");
-                }
-
-                playGame = false;
             }
-            else   
-                $("#player2").text(userArray[2].name);
-            
-                
-            if(!playGame)
-                setUpGame();
+
+            if (!playGame)
+                setUpPlayers();
 
             if (!processingFlag)
                 $("#winbox").html("<img src='assets/images/ezgif.com-crop.gif'>");
@@ -170,25 +144,21 @@
                         var imgchoice = "assets/images/" + choice;
                         $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
                         $("#player2Pick").html("<img src='assets/images/" + userArray[2].choice + "2.jpg'>");
+                        return;
                     }
-                    else
-                    {
-                        let winner = userArray[winflag].name;
-            
-                        console.log("winner ", winflag);
-            
-                        $("#winbox").html(winner + "<br>WINS!!");
-                        $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
-                        $("#player2Pick").html("<img src='assets/images/" + userArray[2].choice + "2.jpg'>");
-                    }
+        
+                    let winner = userArray[winflag].name;
+        
+                    console.log("winner ", winflag);
+        
+                    $("#winbox").html(winner + "<br>WINS!!");
+                    $("#player1Pick").html("<img src='assets/images/" + userArray[1].choice + "1.jpg'>");
+                    $("#player2Pick").html("<img src='assets/images/" + userArray[2].choice + "2.jpg'>");
 
                     processingFlag = true;
 
-                    // ** DEBUG **
-                    updateUser();
-
                     // Need to wait and on next update, update the scores
-                    setTimeout(continueProcessing, 6000);
+                    setTimeout(continueProcessing, 8000);
                 }
             } 
   
@@ -221,10 +191,8 @@
             database.ref("/turn").set(turn);
         }
 
-        function setUpGame()
+        function setUpPlayers()
         {
-            console.log("In SetUpGame");
-
             if (userArray == null) // No player array
             {
                 players = 0;
@@ -234,7 +202,6 @@
             {
                 console.log("array length ", userArray.length);
                 // number of users is array - 1
-
                 if (userArray.length == null)
                 {
                     players = 1;
@@ -243,19 +210,32 @@
                 {
                     players = userArray.length;
                     players = players - 1;
-
-                    if (players == 2)
+                    if (players == 1)
+                        $("#player1").text(userArray[1].name);
+                    else
                     {  // second player added - time to play!!
                         console.log("Added player 2");
-                        
+
+                        $("#player2").text(userArray[2].name);
                         playGame = true;  // Set to pick choices
-                        choiceInProgress = false;  // Turn "on" choice flag
                         database.ref("/turn").set(turn);
                     }
                 }
             }
             console.log("Players ", players);
         }
+
+        // At the initial load and subsequent value changes, get a snapshot of the stored data.
+        // This function allows you to update your page in real-time when the firebase database changes.
+        database.ref().on("child_added", function(snapshot) {
+
+            console.log("In child added");
+            console.log(snapshot.val());
+        
+        // If any errors are experienced, log them to console.
+        }, function(errorObject) {
+            console.log("The read failed: " + errorObject.code);
+        });
     
         function stuffIt()
         {
