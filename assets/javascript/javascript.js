@@ -30,6 +30,7 @@
     var setUp = true;
     var playGame = false;
     var childchange = 0;
+    var processingFlag = false;
 
     $(document).ready(function()
     {
@@ -115,7 +116,8 @@
             if (!playGame)
                 setUpPlayers();
 
-            $("#winbox").html("<img src='assets/images/ezgif.com-crop.gif'>");
+            if (!processingFlag)
+                $("#winbox").html("<img src='assets/images/ezgif.com-crop.gif'>");
 
             if (playGame)
             {
@@ -127,7 +129,21 @@
                 if (userArray[1].choice != "" && userArray[2].choice != "")
                 {   // Got some choices
                     console.log("In checking results")
+
+                    $("#score1").html("<br>Wins: " + userArray[1].wins + "    Losses: " + userArray[1].losses);
+                    $("#score2").html("<br>Wins: " + userArray[2].wins + "    Losses: " + userArray[2].losses);
+                    
+                    if (processingFlag)
+                    {
+                        return;
+                    }
+
                     checkResults();
+                    processingFlag = true;
+                    updateUser();
+
+                    // Need to wait and on next update, update the scores
+                    setTimeout(continueProcessing, 4000);
 
                     //setTimeout(updateUser, 4000);
                     // Clear out the choices  **** I need to come back to this **
@@ -147,6 +163,16 @@
         }, function(errorObject) {
             console.log("The read failed: " + errorObject.code);
         });
+
+        function continueProcessing()
+        {
+            processingFlag = false;
+
+            console.log("Finish processing");
+            // Reset user to start another round
+            //turn = 1;
+            //database.ref("/turn").set(turn);
+        }
 
         function setUpPlayers()
         {
