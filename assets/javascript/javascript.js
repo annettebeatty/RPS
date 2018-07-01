@@ -118,7 +118,7 @@
             if (mePlayer == turn)
             {
                 console.log("My turn");
-                $("#playerMsg").text("Your turn - choose rock, paper or scissors?");
+                $("#playerMsg").text("Your turn -- rock, paper or scissors? (Click to select)");
             }
             else
             {
@@ -231,7 +231,7 @@
                     updateUser();
 
                     // Need to wait and on next update, update the scores
-                    setTimeout(continueProcessing, 5000);
+                    setTimeout(continueProcessing, 4000);
                 }
             } 
 
