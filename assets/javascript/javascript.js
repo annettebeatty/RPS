@@ -1,13 +1,23 @@
   // Initialize Firebase
 
   var config = {
+    apiKey: "AIzaSyDHNIjVU3N-noFomiarsHvdh7IcGk_FHc8",
+    authDomain: "rps-database-33456.firebaseapp.com",
+    databaseURL: "https://rps-database-33456.firebaseio.com",
+    projectId: "rps-database-33456",
+    storageBucket: "rps-database-33456.appspot.com",
+    messagingSenderId: "699960990417"
+  };
+  
+  /*
+  var config = {
     apiKey: "AIzaSyAl0SXm8kPmwFsU9Md0ATISsc_1Iyj9N9c",
     authDomain: "rockpaper-cfdde.firebaseapp.com",
     databaseURL: "https://rockpaper-cfdde.firebaseio.com",
     projectId: "rockpaper-cfdde",
     storageBucket: "rockpaper-cfdde.appspot.com",
     messagingSenderId: "37242376355"
-    };
+    }; */
     
     // Assign the reference to the database to a variable named 'database'
     // var database = ...
